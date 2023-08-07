@@ -6,42 +6,40 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
+import { MoviesService } from './movies.service';
+import { Movie } from './entities/movie.entitiy';
+import { CreateMovieDTO } from './dto/create-movie.dto';
+import { UpdateMovieDTO } from './dto/update-movie.dto';
 
-@Controller('movies')
+@Controller('movies') // /movies에 대한 경로 요청을 받으면 아래 함수를 실행시킴
 export class MoviesController {
+  constructor(private readonly moviesService: MoviesService) {}
+
   @Get()
-  getAll() {
-    return 'This will return all movies';
+  getAll(): Movie[] {
+    return this.moviesService.getAll();
   }
 
-  @Get('search')
-  search(@Query('year') searchingYear: string) {
-    return `We are searching for a movie made after : ${searchingYear}`;
+  @Get(':id') // /movies/id값 에 대한 요청을 받으면 아래 함수를 실행시킴
+  getOne(@Param('id') movieId: number): Movie {
+    console.log(typeof movieId);
+    return this.moviesService.getOne(movieId);
   }
 
-  @Get('/:id')
-  getOne(@Param('id') movieId: string) {
-    return `This will return one movie with the id: ${movieId}`;
+  @Post() // /movies 경로로 post 요청이 오면 아래 함수를 실행시킴 body의 내용을 가져옴 해당 body의 타입은 CreateMovieDTO 타입과 같아야함.
+  create(@Body() movieData: CreateMovieDTO) {
+    // console.log(movieData);
+    return this.moviesService.create(movieData);
   }
 
-  @Post()
-  create(@Body() movieData) {
-    console.log(movieData);
-    return movieData;
+  @Delete(':id')
+  remove(@Param('id') movieId: number) {
+    return this.moviesService.deleteOne(movieId);
   }
 
-  @Delete('/:id')
-  remove(@Param('id') movieId: string) {
-    return `this will delete a movie with the id : ${movieId}`;
-  }
-
-  @Patch('/:id')
-  patch(@Param('id') movieId: string, @Body() updateData) {
-    return {
-      updateMovie: movieId,
-      ...updateData,
-    };
+  @Patch(':id')
+  patch(@Param('id') movieId: number, @Body() updateData: UpdateMovieDTO) {
+    return this.moviesService.update(movieId, updateData);
   }
 }
