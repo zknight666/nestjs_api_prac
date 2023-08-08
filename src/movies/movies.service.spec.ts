@@ -14,8 +14,8 @@ describe('MoviesService', () => {
     service = module.get<MoviesService>(MoviesService);
   });
 
-  afterAll( () => { // db 지우는 function 넣을 수 있음
-
+  afterAll(() => {
+    // db 지우는 function 넣을 수 있음
   });
 
   it('should be defined', () => {
@@ -106,5 +106,4 @@ describe('MoviesService', () => {
       expect(e).toBeInstanceOf(NotFoundException);
     }
   });
-
 });
